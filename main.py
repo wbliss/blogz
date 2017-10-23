@@ -48,7 +48,7 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/blog?userid=' +str(user.id))
+            return redirect('/blog?userid=' +str(user.username))
         else:
             flash('User already exists', 'error')
             return render_template('signup.html')
@@ -83,7 +83,7 @@ def new_post():
 @app.route('/blog', methods=['GET'])
 def view_blog():
     id = request.args.get('id')
-    userid = request.args.get('userid')
+    username = request.args.get('user')
 
     
     if id:
@@ -94,9 +94,9 @@ def view_blog():
         owner = User.query.filter_by(id=owner_id).first()
         return render_template('blog.html', title=title, text=text, owner=owner)
     
-    if userid: 
-        user = User.query.filter_by(id=userid).first()
-        user_blogs = Blog.query.filter_by(owner_id=userid).order_by(desc(Blog.id)).all()
+    if username: 
+        user = User.query.filter_by(username=username).first()
+        user_blogs = Blog.query.filter_by(owner_id=user.id).order_by(desc(Blog.id)).all()
         return render_template('user.html', user=user, user_blogs=user_blogs)
 
     posts = Blog.query.order_by(desc(Blog.id)).all()
