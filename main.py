@@ -5,7 +5,7 @@ from models import User, Blog
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'blogs', 'index']
+    allowed_routes = ['login', 'signup', 'view_blog', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
@@ -19,7 +19,7 @@ def login():
         if user and user.password == password:
             session['username'] = username
             flash('Welcome, ' +username, 'not_error')
-            return redirect('/blog?userid=' + str(user.id))
+            return redirect('/blog?user=' + str(user.username))
         else:
             flash('Password is incorrect, or user does not exist', 'error')
             return render_template('login.html', username=username)
@@ -48,7 +48,7 @@ def signup():
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
-            return redirect('/blog?userid=' +str(user.username))
+            return redirect('/blog?user=' +str(new_user.username))
         else:
             flash('User already exists', 'error')
             return render_template('signup.html')
